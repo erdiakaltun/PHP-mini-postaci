@@ -2,31 +2,16 @@
 
 
 function gercek_ip_al() {
-    $ip_keys = [
-        'HTTP_CLIENT_IP',
-        'HTTP_X_FORWARDED_FOR',
-        'HTTP_X_FORWARDED',
-        'HTTP_X_CLUSTER_CLIENT_IP',
-        'HTTP_FORWARDED_FOR',
-        'HTTP_FORWARDED',
-        'REMOTE_ADDR'
-    ];
-
-    foreach ($ip_keys as $key) {
-        if (!empty($_SERVER[$key])) {
-            // Birden fazla IP varsa (virgülle ayrılmış), ilkini al
-            $ip_list = explode(',', $_SERVER[$key]);
-            $ip = trim($ip_list[0]);
-            if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                return $ip;
-            }
-        }
-    }
-    return '0.0.0.0';
+    // Forwarded headers can be supplied by the client; trust only the web server peer address.
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '0.0.0.0';
 }
 
 // İzin verilen IP'ler
-$izinli_ipler = ['2a02:e0:661b:d200:48bf:2f94:6542:97bc', '111.222.333.444']; // kendi IP'lerini ekle
+$izinli_ipler = array_values(array_filter(array_map(
+    'trim',
+    explode(',', getenv('MINI_POSTACI_ALLOWED_IPS') ?: '')
+)));
 
 $ziyaretci_ip = gercek_ip_al();
 
@@ -107,14 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_request'])) {
     if ($method === 'POST') {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
     } elseif ($method !== 'GET') {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
     }
     $result = curl_exec($ch);
