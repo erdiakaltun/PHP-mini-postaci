@@ -1,35 +1,50 @@
-# 📮 Mini PHP Postacı
+# Mini PHP Postacı
 
-Bu proje, PHP ile yazılmış basit ve hafif bir API test aracıdır. Postman benzeri temel istek gönderme işlevlerini destekler. İstekleri kaydetme, düzenleme, silme ve koleksiyon olarak yönetme imkanı sağlar.
+PHP ile yazılmış basit bir API test aracıdır. GET, POST, PUT, DELETE ve PATCH istekleri gönderebilir; istekleri koleksiyonlar içinde saklayabilirsiniz.
 
-## 🚀 Özellikler
+## Özellikler
 
-- ✅ GET, POST, PUT, DELETE, PATCH istekleri desteklenir
-- 📂 Klasör/koleksiyon yapısı ile isteklerinizi organize edin
-- 💾 Koleksiyonları `collections.json` dosyasında saklar
-- 🔐 IP tabanlı erişim kontrolü içerir
-- 📬 curl ile istek gönderimi
-- 🧾 Headers ve Body düzenleme
-- 🌐 JSON yanıtları düzgün formatta gösterilir
+- HTTP isteklerini cURL ile gönderme
+- Klasör ve koleksiyonlarla istekleri düzenleme
+- İstek başlıklarını ve gövdesini düzenleme
+- JSON yanıtlarını biçimli gösterme
+- IP tabanlı erişim kontrolü
 
-## 📁 Kurulum
+## Gereksinimler
 
-### Gereksinimler
+- PHP 7 veya üzeri
+- cURL eklentisi etkin PHP
+- Apache, Nginx veya PHP yerleşik web sunucusu
 
-- PHP 7.x veya üzeri
-- Web sunucusu (Apache/Nginx) veya PHP built-in server
+## Kurulum
 
-### Adımlar
+1. Depoyu alın:
 
-1. Bu projeyi klonlayın veya dosyaları indirin:
+   ```sh
+   git clone https://github.com/erdiakaltun/PHP-mini-postaci.git
+   cd PHP-mini-postaci
+   ```
 
-   ```bash
-   git clone https://github.com/erdiakaltun/mini-php-postaci.git
-   cd mini-php-postaci
-## 📦 Dosya Yapısı
-mini-php-postaci/
-├── collections.json     # Koleksiyonların saklandığı dosya
-├── index.php            # Ana uygulama dosyası
-└── README.md            # Bu dosya
+2. Web sunucunuzda uygulamayı çalıştırmadan önce erişmesine izin verilecek IP adreslerini ortam değişkeninde tanımlayın. Birden fazla adresi virgülle ayırabilirsiniz:
 
+   ```sh
+   MINI_POSTACI_ALLOWED_IPS="203.0.113.10,2001:db8::10"
+   ```
 
+   Apache veya PHP-FPM kullanıyorsanız değişkeni web sunucusu/PHP-FPM servis yapılandırmasına ekleyin. Uygulama istemci adresi olarak yalnızca `REMOTE_ADDR` değerini kullanır; ters vekil başlıkları güvenilir kabul edilmez. Değişken ayarlanmazsa tüm istekler reddedilir.
+
+3. Web kökünü bu klasöre yönlendirin. Yerel geliştirme için:
+
+   ```sh
+   php -S 127.0.0.1:8000
+   ```
+
+   Ardından `http://127.0.0.1:8000` adresini açın ve `127.0.0.1` değerini izin verilen IP listesine ekleyin.
+
+## Veri
+
+Koleksiyonlar `collections.json` dosyasında saklanır. Web sunucusu kullanıcısının bu dosyaya yazma izni olmalıdır. Dosyayı web üzerinden doğrudan indirmeye kapatmanız önerilir.
+
+## Güvenlik notu
+
+HTTPS hedeflerinde TLS sertifika doğrulaması etkin tutulur. Uygulamayı internete açık bırakmayın; IP erişim kontrolü uygulama düzeyinde ek bir korumadır ve kimlik doğrulamanın yerini tutmaz.
